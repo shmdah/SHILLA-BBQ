@@ -18,10 +18,10 @@
                         display: ['Space Grotesk', 'sans-serif']
                     },
                     colors: {
-                        brand: { 400: '#f87171', 500: '#ef4444', 600: '#dc2626' }, // Appetizing Reds
-                        accent: { 500: '#f59e0b' }, // Warm Orange/Yellow
-                        dark: { 900: '#2a0808', 800: '#3f0c0c', 700: '#541010' }, // Deep Burgundy/Browns
-                        cream: { 50: '#fffbf0', 100: '#fef3c7' } // Warm Cream Backgrounds
+                        brand: { 400: '#f87171', 500: '#ef4444', 600: '#dc2626' },
+                        accent: { 500: '#f59e0b' },
+                        dark: { 900: '#2a0808', 800: '#3f0c0c', 700: '#541010' },
+                        cream: { 50: '#fffbf0', 100: '#fef3c7' }
                     }
                 }
             }
@@ -31,84 +31,105 @@
     <style>
         /* --- BASE STYLES --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        html, body { height: 100%; width: 100%; overflow-x: hidden; scroll-behavior: smooth; display: flex; flex-direction: column; background-color: #fffbf0; color: #1c1917; }
+        html, body { height: 100%; width: 100%; overflow-x: hidden; scroll-behavior: smooth; display: flex; flex-direction: column; transition: background-color 0.3s, color 0.3s; }
+        
+        body { background-color: #f8fafc; color: #0f172a; }
+        html.dark body { background-color: #050505; color: white; }
         
         /* --- SCROLLBAR --- */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #fca5a5; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #ef4444; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        html.dark ::-webkit-scrollbar-thumb { background: #333; }
+        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
         .hide-scroll::-webkit-scrollbar { display: none; }
 
         /* --- VIEWS --- */
-        nav { height: 70px; padding-top: max(10px, env(safe-area-inset-top)); z-index: 50; transition: background 0.3s; }
-        nav.scrolled { background: rgba(42, 8, 8, 0.95); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        nav { height: 60px; padding-top: max(10px, env(safe-area-inset-top)); z-index: 50; transition: background 0.3s; }
+        @media (min-width: 768px) { nav { height: 70px; } }
         main { flex: 1; display: flex; flex-direction: column; }
-        .page { display: none; flex-direction: column; flex: 1; opacity: 0; transition: opacity 0.3s ease; position: relative; z-index: 10; }
+        .page { display: none; flex-direction: column; flex: 1; padding-top: 60px; opacity: 0; transition: opacity 0.3s ease; position: relative; z-index: 10; }
+        @media (min-width: 768px) { .page { padding-top: 70px; } }
         .page.active { display: flex; opacity: 1; animation: fadeIn 0.4s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- GLASS UI --- */
-        .glass { background: #ffffff; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        html.dark .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: none; }
+        
+        .glass-solid { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        html.dark .glass-solid { background: rgba(5, 5, 5, 0.9); border-bottom: 1px solid rgba(255,255,255,0.05); }
         
         /* --- BUTTONS & BADGES --- */
         .btn-primary { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); transition: transform 0.2s, box-shadow 0.2s; }
         .btn-primary:active { transform: scale(0.95); box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3); }
         
-        .cat-pill { white-space: nowrap; padding: 8px 20px; border-radius: 99px; font-size: 13px; font-weight: 700; border: 1px solid rgba(0,0,0,0.1); color: #57534e; transition: all 0.2s; cursor: pointer; background: white; }
+        .cat-pill { white-space: nowrap; padding: 6px 16px; border-radius: 99px; font-size: 11px; font-weight: 700; border: 1px solid rgba(0,0,0,0.1); color: #57534e; transition: all 0.2s; cursor: pointer; background: white; }
+        @media (min-width: 768px) { .cat-pill { padding: 8px 20px; font-size: 13px; } }
         .cat-active { background: #ef4444; color: white; border-color: #ef4444; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
         
-        /* --- MELON CARDS (Promotional Categories - updated for PNG Pop) --- */
-        .melon-card { position: relative; border-radius: 32px; padding: 30px; height: 220px; display: flex; flex-direction: column; justify-content: center; overflow: visible; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid rgba(255,255,255,0.1); }
+        /* --- MELON CARDS (Promotional Categories) --- */
+        .melon-card { position: relative; border-radius: 32px; padding: 30px; height: 220px; display: flex; flex-direction: column; justify-content: center; overflow: visible; cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease; border: 1px solid rgba(255,255,255,0.1); }
         .melon-card.bg-burger { background: linear-gradient(135deg, #b45309, #78350f); }
         .melon-card.bg-drinks { background: linear-gradient(135deg, #be123c, #7f1d1d); }
         .melon-card.bg-sides { background: linear-gradient(135deg, #15803d, #064e3b); }
-        .melon-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
         
-        .melon-img { position: absolute; right: -10%; top: 50%; transform: translateY(-50%); height: 140%; object-fit: contain; z-index: 10; transition: transform 0.5s ease, right 0.5s ease; filter: drop-shadow(-15px 20px 20px rgba(0,0,0,0.5)); }
-        .melon-card:hover .melon-img { transform: translateY(-50%) scale(1.1); right: -5%; }
+        .melon-img { position: absolute; right: -10%; top: 50%; transform: translateY(-50%); height: 140%; object-fit: contain; z-index: 10; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), right 0.3s ease; filter: drop-shadow(-15px 20px 20px rgba(0,0,0,0.5)); pointer-events: none;}
         
-        @media (max-width: 768px) { .melon-card { height: 160px; padding: 20px; border-radius: 24px; } .melon-img { right: -15%; height: 150%; } }
+        /* Desktop Hover */
+        @media (min-width: 768px) {
+            .melon-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+            .melon-card:hover .melon-img { transform: translateY(-50%) scale(1.1); right: -5%; }
+        }
 
-        /* --- CART HONEY (Pulsing Cart Badge) --- */
-        .cart-icon-wrapper { position: relative; cursor: pointer; color: white; transition: color 0.3s; }
-        .cart-icon-wrapper:hover { color: #fca5a5; }
-        
-        .cart-badge { position: absolute; top: -6px; right: -8px; background-color: #f59e0b; color: white; font-size: 10px; font-weight: 900; height: 18px; width: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid #2a0808; }
+        /* Mobile Adjustments & Force Hover Class for Tap */
+        @media (max-width: 768px) { 
+            .melon-card { height: 135px; padding: 16px; border-radius: 20px; } 
+            .melon-img { right: -10%; height: 150%; } 
+            h1.text-5xl { font-size: 2.25rem; }
+        }
+        .melon-force-hover { transform: translateY(-5px) !important; box-shadow: 0 15px 30px rgba(0,0,0,0.2) !important; }
+        .melon-force-hover .melon-img { transform: translateY(-50%) scale(1.1) !important; right: -5% !important; }
+
+        /* --- CART HONEY --- */
+        .cart-icon-wrapper { position: relative; cursor: pointer; transition: transform 0.2s; }
+        .cart-icon-wrapper:active { transform: scale(0.9); }
+        .cart-badge { position: absolute; top: -4px; right: -6px; background-color: #f59e0b; color: white; font-size: 9px; font-weight: 900; height: 16px; width: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid #2a0808; }
         .cart-badge.visible { opacity: 1; transform: scale(1); }
         .cart-pulse { animation: cartPop 0.4s ease-in-out; }
         @keyframes cartPop { 0% { transform: scale(1); } 50% { transform: scale(1.4); color: #f59e0b; } 100% { transform: scale(1); } }
 
         /* --- FOOTER HONEY --- */
-        .wc-brand-footer { width: 100%; display: flex; justify-content: center; align-items: center; padding: 30px 0; opacity: 1; margin-top: auto; }
-        .wc-brand-text { font-family: 'Poppins', sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #a8a29e; font-weight: 700; margin-right: 8px; }
-        .wc-brand-icon { width: 22px; height: 22px; background: linear-gradient(135deg, #22c55e, #15803d); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 10px; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); }
+        .wc-brand-footer { width: 100%; display: flex; justify-content: center; align-items: center; padding: 20px 0; opacity: 1; margin-top: auto; }
+        .wc-brand-text { font-family: 'Poppins', sans-serif; font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: #a8a29e; font-weight: 700; margin-right: 6px; }
+        .wc-brand-icon { width: 18px; height: 18px; background: linear-gradient(135deg, #22c55e, #15803d); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 8px; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); }
 
         /* --- PRODUCT GRID --- */
-        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        @media (min-width: 768px) { .product-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        @media (min-width: 768px) { .product-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
         @media (min-width: 1024px) { .product-grid { grid-template-columns: repeat(4, 1fr); } }
 
-        .food-card { background: white; border-radius: 24px; padding: 12px; transition: transform 0.3s, box-shadow 0.3s; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-        .food-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
-        .food-img-container { background: #fffbf0; border-radius: 16px; aspect-ratio: 1; display: flex; justify-content: center; align-items: center; margin-bottom: 12px; overflow: hidden; position: relative; }
+        .food-card { background: white; border-radius: 16px; padding: 10px; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        @media (min-width: 768px) { .food-card { padding: 12px; border-radius: 20px; } }
+        .food-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.06); }
+        .food-img-container { background: #fffbf0; border-radius: 12px; aspect-ratio: 1; display: flex; justify-content: center; align-items: center; margin-bottom: 8px; overflow: hidden; position: relative; }
         .food-img { width: 85%; height: 85%; object-fit: contain; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.15)); transition: transform 0.5s; }
-        .food-card:hover .food-img { transform: scale(1.08) rotate(5deg); }
+        .food-card:hover .food-img { transform: scale(1.08) rotate(3deg); }
 
         /* --- TOAST --- */
-        #toast { position: fixed; top: 90px; left: 50%; transform: translateX(-50%) translateY(-50px); background: #ef4444; color: white; padding: 12px 24px; border-radius: 50px; font-size: 13px; font-weight: 700; z-index: 9999; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4); }
+        #toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-50px); background: #ef4444; color: white; padding: 10px 20px; border-radius: 50px; font-size: 12px; font-weight: 700; z-index: 9999; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; display: flex; align-items: center; gap: 8px; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4); }
         #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
         /* --- LOADER --- */
         #loader { position: fixed; inset: 0; background: #2a0808; z-index: 99999; display: flex; justify-content: center; align-items: center; transition: opacity 0.4s ease; }
-        .spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1); border-top-color: #ef4444; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #ef4444; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         /* --- WAVY DIVIDER --- */
         .wave-divider { position: absolute; bottom: -1px; left: 0; width: 100%; overflow: hidden; line-height: 0; transform: rotate(180deg); }
-        .wave-divider svg { position: relative; display: block; width: calc(100% + 1.3px); height: 40px; }
+        .wave-divider svg { position: relative; display: block; width: calc(100% + 1.3px); height: 30px; }
         .wave-divider .shape-fill { fill: #fffbf0; }
-        @media (min-width: 768px) { .wave-divider svg { height: 80px; } }
+        @media (min-width: 768px) { .wave-divider svg { height: 60px; } }
     </style>
 </head>
 <body class="font-sans text-stone-800">
@@ -127,43 +148,46 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <button onclick="openCart()" class="text-xl p-2 cart-icon-wrapper transition" id="cart-icon">
+            <button onclick="openCart()" class="text-lg md:text-xl p-2 cart-icon-wrapper" id="cart-icon">
                 <i class="fas fa-shopping-cart"></i><div id="cart-badge" class="cart-badge">0</div>
             </button>
-            <button onclick="toggleMobileMenu()" class="text-xl p-2 md:hidden hover:text-brand-400"><i class="fas fa-bars-staggered"></i></button>
+            <button onclick="toggleMobileMenu()" class="text-lg md:text-xl p-2 md:hidden hover:text-brand-400"><i class="fas fa-bars-staggered"></i></button>
         </div>
     </nav>
 
     <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[105] opacity-0 pointer-events-none transition-opacity duration-300 md:hidden" onclick="toggleMobileMenu()"></div>
     
-    <div id="mobile-menu" class="fixed top-0 right-0 translate-x-full w-[65%] h-full z-[110] bg-white shadow-2xl flex flex-col py-10 px-6 transition-transform duration-300 ease-in-out border-l border-gray-100 md:hidden">
-        <div class="flex flex-col items-start space-y-6 text-lg font-black w-full tracking-wide text-stone-800 mt-4">
-            <button onclick="navigateFromMenu('home')" class="hover:text-brand-500 text-left w-full">HOME</button>
-            <button onclick="navigateFromMenu('catalog')" class="hover:text-brand-500 text-left w-full">FULL MENU</button>
+    <div id="mobile-menu" class="fixed top-0 right-0 translate-x-full w-[65%] h-full z-[110] bg-white shadow-2xl flex flex-col py-8 px-5 transition-transform duration-300 ease-in-out border-l border-gray-100 md:hidden">
+        <div class="flex flex-col items-start space-y-5 text-base font-black w-full tracking-wide text-stone-800 mt-4">
+            <button onclick="navigateFromMenu('home')" class="hover:text-brand-500 text-left w-full border-b border-gray-100 pb-2">HOME</button>
+            <button onclick="navigateFromMenu('catalog')" class="hover:text-brand-500 text-left w-full border-b border-gray-100 pb-2">FULL MENU</button>
             <button onclick="openCart(); toggleMobileMenu();" class="hover:text-brand-500 text-left w-full">MY CART</button>
         </div>
         
-        <div class="mt-auto flex flex-col items-start gap-6 w-full border-t border-gray-200 pt-6">
-            <button onclick="toggleMobileMenu()" class="text-xs text-stone-500 border border-gray-200 px-6 py-2 rounded-full font-bold w-full text-center">CLOSE</button>
+        <div class="mt-auto flex flex-col items-start gap-5 w-full">
+            <a href="https://www.instagram.com/iphone__hub_ke?igsh=MWtndmpkcTZkZWgzNQ==" target="_blank" class="text-3xl text-pink-500 hover:text-pink-400 transition-transform active:scale-95">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <button onclick="toggleMobileMenu()" class="text-[10px] text-stone-500 border border-gray-200 px-6 py-2 rounded-full font-bold w-full text-center active:bg-gray-100">CLOSE</button>
         </div>
     </div>
 
     <main class="z-10 relative flex-1 flex flex-col">
 
         <section id="home" class="page active pt-0">
-            <div class="relative bg-dark-900 pt-28 pb-32 px-4 flex flex-col items-center justify-center min-h-[70vh]">
+            <div class="relative bg-dark-900 pt-24 pb-20 md:pt-28 md:pb-32 px-4 flex flex-col items-center justify-center min-h-[60vh] md:min-h-[70vh]">
                 <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 32px 32px;"></div>
                 
                 <div class="relative z-10 text-center max-w-4xl mx-auto flex flex-col items-center">
-                    <span class="inline-block border border-brand-500 text-brand-400 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-full mb-6">Always Fresh</span>
+                    <span class="inline-block border border-brand-500 text-brand-400 text-[9px] md:text-xs font-black uppercase tracking-[0.3em] px-3 py-1 md:px-4 md:py-1.5 rounded-full mb-4 md:mb-6">Always Fresh</span>
                     
-                    <h1 class="text-6xl md:text-8xl lg:text-9xl font-display font-black mb-4 tracking-tighter leading-none text-white drop-shadow-2xl">
+                    <h1 class="text-5xl md:text-8xl lg:text-9xl font-display font-black mb-3 md:mb-4 tracking-tighter leading-none text-white drop-shadow-2xl">
                         PIZZA & <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-accent-500">BURGER</span>
                     </h1>
                     
-                    <p class="text-gray-300 text-sm md:text-lg max-w-lg mx-auto mb-8 font-medium">Handcrafted meals made with premium ingredients. Delivered hot to your door in minutes.</p>
+                    <p class="text-gray-300 text-xs md:text-lg max-w-sm md:max-w-lg mx-auto mb-6 md:mb-8 font-medium leading-relaxed">Handcrafted meals made with premium ingredients. Delivered hot to your door in minutes.</p>
                     
-                    <button onclick="showPage('catalog')" class="btn-primary px-10 py-4 rounded-full font-black tracking-widest text-sm md:text-base uppercase flex items-center gap-3">
+                    <button onclick="showPage('catalog')" class="btn-primary px-8 py-3 md:px-10 md:py-4 rounded-full font-black tracking-widest text-xs md:text-base uppercase flex items-center gap-2 md:gap-3">
                         Order Now <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
@@ -175,33 +199,33 @@
                 </div>
             </div>
 
-            <div class="max-w-7xl mx-auto w-full px-4 md:px-8 py-16 md:py-24">
-                <div class="text-center mb-10">
-                    <h2 class="text-3xl md:text-5xl font-display font-black text-stone-800">CRAVING SOMETHING?</h2>
+            <div class="max-w-7xl mx-auto w-full px-3 md:px-8 py-10 md:py-24">
+                <div class="text-center mb-6 md:mb-10">
+                    <h2 class="text-2xl md:text-5xl font-display font-black text-stone-800">CRAVING SOMETHING?</h2>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8">
                     
-                    <div onclick="filterFromHome('Burger')" class="melon-card bg-burger group">
-                        <div class="relative z-10 w-2/3">
-                            <h3 class="text-3xl md:text-4xl font-display font-black text-white mb-2 leading-tight">Gourmet<br>Burgers</h3>
-                            <span class="text-xs md:text-sm font-bold text-white/80 group-hover:text-white transition flex items-center gap-2">View Menu <i class="fas fa-arrow-right"></i></span>
+                    <div onclick="handleMelonTap('Burger', this)" class="melon-card bg-burger group">
+                        <div class="relative z-10 w-[60%] md:w-2/3">
+                            <h3 class="text-2xl md:text-4xl font-display font-black text-white mb-1 md:mb-2 leading-tight">Gourmet<br>Burgers</h3>
+                            <span class="text-[10px] md:text-sm font-bold text-white/80 group-hover:text-white transition flex items-center gap-1.5 md:gap-2">View Menu <i class="fas fa-arrow-right text-[9px] md:text-xs"></i></span>
                         </div>
                         <img src="images/burgerhm.png" class="melon-img">
                     </div>
 
-                    <div onclick="filterFromHome('Side')" class="melon-card bg-sides group">
-                        <div class="relative z-10 w-2/3">
-                            <h3 class="text-3xl md:text-4xl font-display font-black text-white mb-2 leading-tight">Crispy<br>Fries</h3>
-                            <span class="text-xs md:text-sm font-bold text-white/80 group-hover:text-white transition flex items-center gap-2">View Menu <i class="fas fa-arrow-right"></i></span>
+                    <div onclick="handleMelonTap('Side', this)" class="melon-card bg-sides group">
+                        <div class="relative z-10 w-[60%] md:w-2/3">
+                            <h3 class="text-2xl md:text-4xl font-display font-black text-white mb-1 md:mb-2 leading-tight">Crispy<br>Fries</h3>
+                            <span class="text-[10px] md:text-sm font-bold text-white/80 group-hover:text-white transition flex items-center gap-1.5 md:gap-2">View Menu <i class="fas fa-arrow-right text-[9px] md:text-xs"></i></span>
                         </div>
                         <img src="images/frieshm.png" class="melon-img">
                     </div>
 
-                    <div onclick="filterFromHome('Drink')" class="melon-card bg-drinks group">
-                        <div class="relative z-10 w-2/3">
-                            <h3 class="text-3xl md:text-4xl font-display font-black text-white mb-2 leading-tight">Ice Cold<br>Drinks</h3>
-                            <span class="text-xs md:text-sm font-bold text-white/80 group-hover:text-white transition flex items-center gap-2">View Menu <i class="fas fa-arrow-right"></i></span>
+                    <div onclick="handleMelonTap('Drink', this)" class="melon-card bg-drinks group">
+                        <div class="relative z-10 w-[60%] md:w-2/3">
+                            <h3 class="text-2xl md:text-4xl font-display font-black text-white mb-1 md:mb-2 leading-tight">Ice Cold<br>Drinks</h3>
+                            <span class="text-[10px] md:text-sm font-bold text-white/80 group-hover:text-white transition flex items-center gap-1.5 md:gap-2">View Menu <i class="fas fa-arrow-right text-[9px] md:text-xs"></i></span>
                         </div>
                         <img src="images/sodahm.png" class="melon-img">
                     </div>
@@ -220,17 +244,17 @@
         <section id="catalog" class="page bg-cream-50">
             <div class="max-w-7xl mx-auto w-full flex flex-col h-full">
                 
-                <div class="px-4 md:px-8 py-4 z-20 sticky top-[60px] md:top-[70px] bg-cream-50 pb-4 border-b border-black/5">
-                    <button onclick="showPage('home')" class="text-[10px] md:text-xs font-bold text-stone-500 flex items-center hover:text-brand-500 transition mb-4 w-fit">
-                        <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white shadow-sm flex items-center justify-center mr-2"><i class="fas fa-arrow-left text-[10px] md:text-xs"></i></div> Back to Home
+                <div class="px-3 md:px-8 py-3 md:py-4 z-20 sticky top-[60px] md:top-[70px] bg-cream-50 pb-3 md:pb-4 border-b border-black/5">
+                    <button onclick="showPage('home')" class="text-[9px] md:text-xs font-bold text-stone-500 flex items-center hover:text-brand-500 transition mb-3 md:mb-4 w-fit">
+                        <div class="w-5 h-5 md:w-8 md:h-8 rounded-full bg-white shadow-sm flex items-center justify-center mr-1.5 md:mr-2"><i class="fas fa-arrow-left text-[9px] md:text-xs"></i></div> Back to Home
                     </button>
 
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl md:text-3xl font-display font-black uppercase text-stone-800">Our Menu</h2>
+                    <div class="flex justify-between items-center mb-3 md:mb-4">
+                        <h2 class="text-xl md:text-3xl font-display font-black uppercase text-stone-800">Our Menu</h2>
                     </div>
                     
-                    <div class="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-                        <div class="category-scroll flex gap-2 overflow-x-auto w-full md:w-auto hide-scroll pb-2 md:pb-0">
+                    <div class="flex flex-col md:flex-row gap-3 md:gap-4 justify-between items-start md:items-center">
+                        <div class="category-scroll flex gap-2 overflow-x-auto w-full md:w-auto hide-scroll pb-1 md:pb-0">
                             <button onclick="setFilter('all', this)" class="cat-pill cat-active">All Menu</button>
                             <button onclick="setFilter('Burger', this)" class="cat-pill">Burgers</button>
                             <button onclick="setFilter('Side', this)" class="cat-pill">Sides</button>
@@ -238,28 +262,14 @@
                         </div>
 
                         <div class="relative w-full md:w-64 shrink-0">
-                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-stone-400"></i>
-                            <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Search food..." class="w-full bg-white border border-black/10 text-stone-800 pl-10 pr-4 py-3 rounded-full outline-none focus:border-brand-500 transition-colors text-sm font-medium shadow-sm">
+                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-stone-400 text-xs md:text-base"></i>
+                            <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Search food..." class="w-full bg-white border border-black/10 text-stone-800 pl-9 md:pl-10 pr-4 py-2.5 md:py-3 rounded-full outline-none focus:border-brand-500 transition-colors text-[11px] md:text-sm font-medium shadow-sm">
                         </div>
                     </div>
                 </div>
 
                 <div class="flex flex-1">
-                    <aside class="hidden md:block w-64 p-6 border-r border-black/5 h-[calc(100vh-160px)] sticky top-[150px] overflow-y-auto hide-scroll">
-                        <h3 class="font-bold mb-6 flex items-center gap-2 uppercase tracking-widest text-xs text-stone-500"><i class="fas fa-sliders-h"></i> Filters</h3>
-                        
-                        <div class="mb-8">
-                            <h4 class="font-bold mb-4 text-sm text-stone-900">Category</h4>
-                            <div class="space-y-3 text-stone-700">
-                                <label class="flex items-center gap-3 text-sm cursor-pointer"><input type="radio" name="catFilterDesk" value="all" checked onchange="filterCategoryDesk('all')" class="accent-red-500 w-4 h-4"> All Menu</label>
-                                <label class="flex items-center gap-3 text-sm cursor-pointer"><input type="radio" name="catFilterDesk" value="Burger" onchange="filterCategoryDesk('Burger')" class="accent-red-500 w-4 h-4"> Burgers</label>
-                                <label class="flex items-center gap-3 text-sm cursor-pointer"><input type="radio" name="catFilterDesk" value="Side" onchange="filterCategoryDesk('Side')" class="accent-red-500 w-4 h-4"> Sides</label>
-                                <label class="flex items-center gap-3 text-sm cursor-pointer"><input type="radio" name="catFilterDesk" value="Drink" onchange="filterCategoryDesk('Drink')" class="accent-red-500 w-4 h-4"> Drinks</label>
-                            </div>
-                        </div>
-                    </aside>
-
-                    <div class="flex-1 pb-10 pt-6 px-4 md:px-8 flex flex-col">
+                    <div class="flex-1 pb-10 pt-4 md:pt-6 px-3 md:px-8 flex flex-col">
                         <div class="product-grid mb-8" id="grid-container">
                             </div>
                         
@@ -275,64 +285,64 @@
         </section>
 
         <section id="product-detail-view" class="page bg-cream-50">
-            <div class="max-w-5xl mx-auto w-full px-4 md:px-8 py-4 md:py-6 pb-24 flex flex-col h-full">
+            <div class="max-w-5xl mx-auto w-full px-4 md:px-8 py-4 md:py-6 pb-20 md:pb-24 flex flex-col h-full">
                 
-                <div class="flex justify-between items-center mb-6">
-                    <button onclick="showPage('catalog')" class="text-[10px] md:text-xs font-bold text-stone-500 flex items-center hover:text-brand-500 transition">
-                        <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white shadow-sm flex items-center justify-center mr-2"><i class="fas fa-arrow-left text-[10px] md:text-xs"></i></div> Back to Menu
+                <div class="flex justify-between items-center mb-4 md:mb-6">
+                    <button onclick="showPage('catalog')" class="text-[9px] md:text-xs font-bold text-stone-500 flex items-center hover:text-brand-500 transition">
+                        <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white shadow-sm flex items-center justify-center mr-1.5 md:mr-2"><i class="fas fa-arrow-left text-[9px] md:text-xs"></i></div> Back to Menu
                     </button>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 mb-8 flex-1">
-                    <div class="flex justify-center items-center h-[300px] md:h-[450px] relative">
-                        <img id="mainImage" src="" class="h-full w-full object-contain filter drop-shadow-2xl transition-transform duration-300 hover:scale-105">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-16 mb-6 md:mb-8 flex-1">
+                    <div class="flex justify-center items-center h-[220px] md:h-[450px] relative">
+                        <img id="mainImage" src="" class="h-full w-full object-cover rounded-full shadow-2xl transition-transform duration-300 hover:scale-105 border-4 border-white">
                     </div>
 
                     <div class="flex flex-col justify-center">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span id="detail-category" class="text-[10px] md:text-xs font-bold text-brand-500 uppercase tracking-widest bg-brand-500/10 px-3 py-1 rounded-full">Category</span>
+                        <div class="flex items-center gap-2 mb-1.5 md:mb-2">
+                            <span id="detail-category" class="text-[9px] md:text-xs font-bold text-brand-500 uppercase tracking-widest bg-brand-500/10 px-2.5 md:px-3 py-1 rounded-full">Category</span>
                         </div>
-                        <h1 id="product-title" class="text-3xl md:text-5xl font-display font-black tracking-tighter leading-tight mb-2 text-stone-900"></h1>
+                        <h1 id="product-title" class="text-2xl md:text-5xl font-display font-black tracking-tighter leading-tight mb-1.5 md:mb-2 text-stone-900"></h1>
                         
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="flex text-accent-500 text-[10px] md:text-xs"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
-                            <span class="text-[10px] md:text-xs text-stone-500 font-medium">(Chef's Choice)</span>
+                        <div class="flex items-center gap-1.5 md:gap-2 mb-3 md:mb-4">
+                            <div class="flex text-accent-500 text-[9px] md:text-xs"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                            <span class="text-[9px] md:text-xs text-stone-500 font-medium">(Chef's Choice)</span>
                         </div>
                         
-                        <div class="flex items-end gap-2 mb-4">
-                            <div id="price-tag" class="text-3xl md:text-4xl font-black text-brand-600"></div>
+                        <div class="flex items-end gap-2 mb-3 md:mb-4">
+                            <div id="price-tag" class="text-2xl md:text-4xl font-black text-brand-600"></div>
                         </div>
 
-                        <p id="product-description" class="text-sm text-stone-600 leading-relaxed mb-8 font-medium"></p>
+                        <p id="product-description" class="text-[11px] md:text-sm text-stone-600 leading-relaxed mb-5 md:mb-8 font-medium"></p>
 
-                        <div class="space-y-6 mb-8 bg-white p-6 rounded-3xl border border-black/5 shadow-sm">
+                        <div class="space-y-4 md:space-y-6 mb-5 md:mb-8 bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border border-black/5 shadow-sm">
                             <div>
-                                <div class="flex justify-between mb-3"><span class="text-xs font-black uppercase tracking-widest text-stone-500">Size Options</span></div>
-                                <div class="grid grid-cols-2 gap-3" id="size-options"></div>
+                                <div class="flex justify-between mb-2 md:mb-3"><span class="text-[10px] md:text-xs font-black uppercase tracking-widest text-stone-500">Size Options</span></div>
+                                <div class="grid grid-cols-2 gap-2 md:gap-3" id="size-options"></div>
                             </div>
                             <div>
-                                <div class="flex justify-between mb-3"><span class="text-xs font-black uppercase tracking-widest text-stone-500">Add Drink?</span></div>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <button onclick="updateAddon(this, 'No Drink')" class="addon-btn bg-white border border-brand-500 text-brand-600 shadow-[0_0_10px_rgba(239,68,68,0.2)] py-3 rounded-xl text-xs font-bold transition-all">No Thanks</button>
-                                    <button onclick="updateAddon(this, '+ Coke (KSh 150)')" class="addon-btn bg-stone-50 border border-stone-200 text-stone-600 py-3 rounded-xl text-xs font-bold transition-all">+ Coke</button>
+                                <div class="flex justify-between mb-2 md:mb-3"><span class="text-[10px] md:text-xs font-black uppercase tracking-widest text-stone-500">Add Drink?</span></div>
+                                <div class="grid grid-cols-2 gap-2 md:gap-3">
+                                    <button onclick="updateAddon(this, 'No Drink')" class="addon-btn bg-white border border-brand-500 text-brand-600 shadow-[0_0_10px_rgba(239,68,68,0.2)] py-2 md:py-3 rounded-xl text-[10px] md:text-xs font-bold transition-all">No Thanks</button>
+                                    <button onclick="updateAddon(this, '+ Coke (KSh 150)')" class="addon-btn bg-stone-50 border border-stone-200 text-stone-600 py-2 md:py-3 rounded-xl text-[10px] md:text-xs font-bold transition-all">+ Coke</button>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex flex-col sm:flex-row gap-3 md:gap-4 mb-4">
-                            <button onclick="addToCart()" class="flex-1 bg-stone-100 text-stone-800 hover:bg-stone-200 font-black py-4 rounded-full flex items-center justify-center gap-2 transition-all active:scale-95 text-xs md:text-sm uppercase tracking-wide">
+                        <div class="flex flex-col sm:flex-row gap-2.5 md:gap-4 mb-4">
+                            <button onclick="addToCart()" class="flex-1 bg-stone-100 text-stone-800 hover:bg-stone-200 font-black py-3 md:py-4 rounded-full flex items-center justify-center gap-2 transition-all active:scale-95 text-[11px] md:text-sm uppercase tracking-wide">
                                 🛒 ADD TO CART
                             </button>
-                            <button onclick="buyNow()" class="flex-1 btn-primary text-white font-black py-4 rounded-full flex items-center justify-center gap-2 transition-all active:scale-95 text-xs md:text-sm uppercase tracking-wide">
-                                <i class="fab fa-whatsapp text-sm md:text-xl"></i> ORDER NOW
+                            <button onclick="buyNow()" class="flex-1 btn-primary text-white font-black py-3 md:py-4 rounded-full flex items-center justify-center gap-2 transition-all active:scale-95 text-[11px] md:text-sm uppercase tracking-wide">
+                                <i class="fab fa-whatsapp text-sm md:text-xl"></i> ORDER VIA WHATSAPP
                             </button>
                         </div>
                     </div>
                 </div>
                 
-                <div class="wc-brand-footer mt-10">
-                    <a href="https://www.whats-cart.com/" target="_blank" class="flex flex-row items-center justify-center gap-2 transition-opacity hover:opacity-100 opacity-80">
-                        <span class="wc-brand-text m-0">POWERED BY</span>
+                <div class="wc-brand-footer mt-4 md:mt-10">
+                    <a href="https://www.whats-cart.com/" target="_blank" class="wc-brand-link">
+                        <span class="wc-brand-text">POWERED BY</span>
                         <div class="wc-brand-icon"><i class="fas fa-shopping-cart"></i></div>
                     </a>
                 </div>
@@ -340,35 +350,35 @@
         </section>
 
         <section id="cart-page" class="page bg-cream-50">
-            <div class="max-w-4xl mx-auto w-full px-4 md:px-8 py-6 md:py-8 flex flex-col h-full">
-                <div class="flex items-center justify-between mb-6 md:mb-8">
-                    <button onclick="backFromCart()" class="text-[10px] md:text-xs font-bold text-stone-500 flex items-center hover:text-brand-500 transition w-fit">
-                        <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white shadow-sm flex items-center justify-center mr-2"><i class="fas fa-arrow-left text-[10px] md:text-xs"></i></div> Back to Menu
+            <div class="max-w-4xl mx-auto w-full px-4 md:px-8 py-4 md:py-8 flex flex-col h-full">
+                <div class="flex items-center justify-between mb-4 md:mb-8">
+                    <button onclick="backFromCart()" class="text-[9px] md:text-xs font-bold text-stone-500 flex items-center hover:text-brand-500 transition w-fit">
+                        <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white shadow-sm flex items-center justify-center mr-1.5 md:mr-2"><i class="fas fa-arrow-left text-[9px] md:text-xs"></i></div> Back to Menu
                     </button>
-                    <button onclick="clearCart()" class="text-[10px] font-bold text-stone-400 bg-white px-4 py-2 rounded-full border border-black/5 hover:text-brand-500 shadow-sm">Clear Cart</button>
+                    <button onclick="clearCart()" class="text-[9px] md:text-[10px] font-bold text-stone-400 bg-white px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-black/5 hover:text-brand-500 shadow-sm">Clear Cart</button>
                 </div>
                 
-                <h2 class="text-2xl md:text-4xl font-display font-black mb-6 md:mb-8 tracking-tight text-stone-800">Your Cart <span id="cart-count-header" class="text-brand-500"></span></h2>
+                <h2 class="text-xl md:text-4xl font-display font-black mb-4 md:mb-8 tracking-tight text-stone-800">Your Cart <span id="cart-count-header" class="text-brand-500"></span></h2>
                 
-                <div class="flex flex-col lg:flex-row gap-6 md:gap-8 items-start">
+                <div class="flex flex-col lg:flex-row gap-4 md:gap-8 items-start">
                     
                     <div class="flex-1 w-full overflow-y-auto hide-scroll order-1">
                         <div id="cart-items-container" class="space-y-3"></div>
                     </div>
 
-                    <div class="w-full lg:w-[350px] bg-white border border-black/5 shadow-lg p-6 rounded-3xl lg:sticky top-[90px] order-2">
-                        <div class="flex justify-between items-end mb-6 border-b border-black/10 pb-6">
-                            <span class="text-xs font-bold text-stone-500 uppercase tracking-widest">Total to Pay</span>
-                            <span id="cart-total" class="text-2xl md:text-3xl font-black text-brand-600">KSh 0</span>
+                    <div class="w-full lg:w-[350px] bg-white border border-black/5 shadow-lg p-5 md:p-6 rounded-2xl md:rounded-3xl lg:sticky top-[90px] order-2">
+                        <div class="flex justify-between items-end mb-4 md:mb-6 border-b border-black/10 pb-4 md:pb-6">
+                            <span class="text-[10px] md:text-xs font-bold text-stone-500 uppercase tracking-widest">Total to Pay</span>
+                            <span id="cart-total" class="text-xl md:text-3xl font-black text-brand-600">KSh 0</span>
                         </div>
 
-                        <button onclick="checkoutCart()" class="w-full btn-primary py-4 rounded-full font-black flex items-center justify-center gap-3 text-sm uppercase">
-                            <i class="fab fa-whatsapp text-lg"></i> ORDER VIA WHATSAPP
+                        <button onclick="checkoutCart()" class="w-full btn-primary py-3.5 md:py-4 rounded-full font-black flex items-center justify-center gap-2 text-[11px] md:text-sm uppercase tracking-wide">
+                            <i class="fab fa-whatsapp text-sm md:text-lg"></i> ORDER VIA WHATSAPP
                         </button>
                         
-                        <div class="wc-brand-footer pt-6 mt-4 pb-0">
-                            <a href="https://www.whats-cart.com/" target="_blank" class="flex flex-row items-center justify-center gap-2 transition-opacity hover:opacity-100 opacity-80">
-                                <span class="wc-brand-text m-0">POWERED BY</span>
+                        <div class="wc-brand-footer pt-4 md:pt-6 mt-2 md:mt-4 pb-0">
+                            <a href="https://www.whats-cart.com/" target="_blank" class="wc-brand-link">
+                                <span class="wc-brand-text">POWERED BY</span>
                                 <div class="wc-brand-icon"><i class="fas fa-shopping-cart"></i></div>
                             </a>
                         </div>
@@ -439,7 +449,8 @@
         // --- STATE ---
         let currentSelection = { product: null, size: '', addon: 'No Drink', finalPrice: 0 };
         let activeCategoryFilter = 'all';
-        let cart = JSON.parse(localStorage.getItem('food_cart_v2')) || [];
+        // Updated local storage key to clear previous session data cleanly
+        let cart = JSON.parse(localStorage.getItem('food_cart_v3')) || [];
 
         // --- INIT ---
         document.addEventListener("DOMContentLoaded", () => {
@@ -497,6 +508,18 @@
             }
         }
 
+        // --- MELON MOBILE HOVER FIX ---
+        function handleMelonTap(cat, element) {
+            // Force hover style on tap for mobile feedback
+            element.classList.add('melon-force-hover');
+            
+            // Delay navigation slightly so user sees the "pop" animation
+            setTimeout(() => {
+                element.classList.remove('melon-force-hover');
+                filterFromHome(cat);
+            }, 250);
+        }
+
         // --- CATEGORY FILTERS ---
         function filterFromHome(cat) {
             setFilter(cat);
@@ -551,7 +574,7 @@
             container.innerHTML = ''; 
             
             if (data.length === 0) { 
-                container.innerHTML = '<div class="col-span-full text-center py-20 opacity-50"><i class="fas fa-search text-4xl mb-4"></i><p class="font-bold text-sm">No items found</p></div>'; 
+                container.innerHTML = '<div class="col-span-full text-center py-20 opacity-50"><i class="fas fa-search text-4xl mb-4"></i><p class="font-bold text-xs md:text-sm">No items found</p></div>'; 
                 return; 
             } 
             
@@ -559,15 +582,15 @@
                 const index = products.indexOf(p); 
                 
                 container.innerHTML += `
-                    <div class="food-card flex flex-col items-center text-center cursor-pointer" onclick="selectProduct(${index})">
-                        <div class="food-img-container w-full">
+                    <div class="food-card flex flex-col items-center text-center cursor-pointer p-2 md:p-3" onclick="selectProduct(${index})">
+                        <div class="food-img-container w-full h-20 md:h-32">
                             <img src="${p.image}" class="food-img">
                         </div>
-                        <p class="text-[10px] font-bold text-brand-500 uppercase tracking-widest mb-1">${p.type}</p>
-                        <h3 class="font-black text-xs md:text-sm leading-tight mb-2 truncate w-full text-stone-800">${p.name}</h3>
-                        <div class="text-brand-600 text-sm font-black mb-3">KSh ${p.basePrice.toLocaleString()}</div>
+                        <p class="text-[9px] md:text-[10px] font-bold text-brand-500 uppercase tracking-widest mb-1">${p.type}</p>
+                        <h3 class="font-black text-[10px] md:text-sm leading-tight mb-1.5 md:mb-2 truncate w-full text-stone-800">${p.name}</h3>
+                        <div class="text-brand-600 text-[11px] md:text-sm font-black mb-2.5 md:mb-3">KSh ${p.basePrice.toLocaleString()}</div>
                         
-                        <button onclick="event.stopPropagation(); quickAddToCart('${p.id}')" class="w-full bg-stone-100 text-stone-800 hover:bg-stone-200 font-bold py-2 rounded-xl transition-colors text-[10px] md:text-xs mt-auto">
+                        <button onclick="event.stopPropagation(); quickAddToCart('${p.id}')" class="w-full bg-stone-100 text-stone-800 hover:bg-stone-200 font-bold py-1.5 px-2 md:py-2 rounded-xl transition-colors text-[9px] md:text-xs mt-auto">
                             🛒 Add to Cart
                         </button>
                     </div>`; 
@@ -589,9 +612,9 @@
             // Reset Addon buttons
             document.querySelectorAll('.addon-btn').forEach((b, i) => {
                 if(i===0) {
-                    b.className = "addon-btn bg-white border border-brand-500 text-brand-600 shadow-[0_0_10px_rgba(239,68,68,0.2)] py-3 rounded-xl text-xs font-bold transition-all";
+                    b.className = "addon-btn bg-white border border-brand-500 text-brand-600 shadow-[0_0_10px_rgba(239,68,68,0.2)] py-2 md:py-3 rounded-xl text-[10px] md:text-xs font-bold transition-all";
                 } else {
-                    b.className = "addon-btn bg-stone-50 border border-stone-200 text-stone-600 py-3 rounded-xl text-xs font-bold transition-all";
+                    b.className = "addon-btn bg-stone-50 border border-stone-200 text-stone-600 py-2 md:py-3 rounded-xl text-[10px] md:text-xs font-bold transition-all";
                 }
             });
             
@@ -609,7 +632,7 @@
                     document.getElementById('price-tag').innerText = 'KSh ' + currentSelection.finalPrice.toLocaleString(); 
                 } 
                 const activeClasses = idx === 0 ? "bg-white border-brand-500 text-brand-600 shadow-[0_0_10px_rgba(239,68,68,0.2)]" : "bg-stone-50 border-stone-200 text-stone-600";
-                container.innerHTML += `<button onclick="setSize(this, '${opt.size}', ${product.basePrice + opt.priceAdd})" class="size-btn border ${activeClasses} py-3 rounded-xl text-[10px] md:text-xs font-bold transition-all">${opt.size}</button>`; 
+                container.innerHTML += `<button onclick="setSize(this, '${opt.size}', ${product.basePrice + opt.priceAdd})" class="size-btn border ${activeClasses} py-2 md:py-3 rounded-xl text-[9px] md:text-xs font-bold transition-all">${opt.size}</button>`; 
             }); 
         }
 
@@ -622,9 +645,9 @@
             document.getElementById('price-tag').innerText = 'KSh ' + currentSelection.finalPrice.toLocaleString(); 
             
             document.querySelectorAll('.size-btn').forEach(b => { 
-                b.className = "size-btn border bg-stone-50 border-stone-200 text-stone-600 py-3 rounded-xl text-[10px] md:text-xs font-bold transition-all";
+                b.className = "size-btn border bg-stone-50 border-stone-200 text-stone-600 py-2 md:py-3 rounded-xl text-[9px] md:text-xs font-bold transition-all";
             }); 
-            btn.className = "size-btn border bg-white border-brand-500 text-brand-600 shadow-[0_0_10px_rgba(239,68,68,0.2)] py-3 rounded-xl text-[10px] md:text-xs font-bold transition-all"; 
+            btn.className = "size-btn border bg-white border-brand-500 text-brand-600 shadow-[0_0_10px_rgba(239,68,68,0.2)] py-2 md:py-3 rounded-xl text-[9px] md:text-xs font-bold transition-all"; 
         }
 
         function updateAddon(btn, type) { 
@@ -640,9 +663,9 @@
             document.getElementById('price-tag').innerText = 'KSh ' + currentSelection.finalPrice.toLocaleString(); 
             
             document.querySelectorAll('.addon-btn').forEach(b => { 
-                b.className = "addon-btn border bg-stone-50 border-stone-200 text-stone-600 py-3 rounded-xl text-[10px] md:text-xs font-bold transition-all";
+                b.className = "addon-btn border bg-stone-50 border-stone-200 text-stone-600 py-2 md:py-3 rounded-xl text-[10px] md:text-xs font-bold transition-all";
             }); 
-            btn.className = "addon-btn border bg-white border-brand-500 text-brand-600 shadow-[0_0_10px_rgba(239,68,68,0.2)] py-3 rounded-xl text-[10px] md:text-xs font-bold transition-all"; 
+            btn.className = "addon-btn border bg-white border-brand-500 text-brand-600 shadow-[0_0_10px_rgba(239,68,68,0.2)] py-2 md:py-3 rounded-xl text-[10px] md:text-xs font-bold transition-all"; 
         }
 
         function backFromCart() { showPage('catalog'); }
@@ -676,7 +699,7 @@
                 cart.push(item); 
             }
             
-            localStorage.setItem('food_cart_v2', JSON.stringify(cart)); 
+            localStorage.setItem('food_cart_v3', JSON.stringify(cart)); 
             updateCartUI(); 
             showToast("Added to Cart"); 
             
@@ -694,20 +717,20 @@
             if (item.qty <= 0) {
                 cart = cart.filter(i => i.cartId !== cartId);
             }
-            localStorage.setItem('food_cart_v2', JSON.stringify(cart)); 
+            localStorage.setItem('food_cart_v3', JSON.stringify(cart)); 
             updateCartUI(); 
         }
 
         function removeFromCart(cartId) { 
             cart = cart.filter(item => item.cartId !== cartId); 
-            localStorage.setItem('food_cart_v2', JSON.stringify(cart)); 
+            localStorage.setItem('food_cart_v3', JSON.stringify(cart)); 
             updateCartUI(); 
         }
 
         function clearCart() { 
             if(confirm("Clear all items from your cart?")) { 
                 cart = []; 
-                localStorage.setItem('food_cart_v2', JSON.stringify(cart)); 
+                localStorage.setItem('food_cart_v3', JSON.stringify(cart)); 
                 updateCartUI(); 
             } 
         }
@@ -732,28 +755,28 @@
                 let total = 0; 
                 
                 if(cart.length === 0) { 
-                    container.innerHTML = '<div class="flex flex-col items-center justify-center py-20 text-stone-300"><i class="fas fa-shopping-cart text-5xl mb-4"></i><p class="text-sm font-bold uppercase tracking-widest">Your cart is empty</p></div>'; 
+                    container.innerHTML = '<div class="flex flex-col items-center justify-center py-16 md:py-20 text-stone-300"><i class="fas fa-shopping-cart text-4xl md:text-5xl mb-3 md:mb-4"></i><p class="text-[11px] md:text-sm font-bold uppercase tracking-widest">Your cart is empty</p></div>'; 
                 } else { 
                     cart.forEach(item => { 
                         total += (item.price * item.qty); 
                         container.innerHTML += `
                         <div class="bg-white p-3 md:p-4 rounded-2xl flex items-center justify-between relative shadow-sm border border-black/5">
-                            <div class="flex items-center gap-3 md:gap-4 w-full pr-6 md:pr-8">
-                                <div class="w-14 h-14 md:w-16 md:h-16 bg-cream-50 rounded-full flex items-center justify-center p-1 shrink-0 overflow-hidden border border-black/5">
+                            <div class="flex items-center gap-3 md:gap-4 w-full pr-5 md:pr-8">
+                                <div class="w-12 h-12 md:w-16 md:h-16 bg-cream-50 rounded-full flex items-center justify-center p-1 shrink-0 overflow-hidden border border-black/5">
                                     <img src="${item.image}" class="w-full h-full object-contain">
                                 </div>
                                 <div class="flex-1">
-                                    <h4 class="font-black text-[11px] md:text-sm text-stone-800 leading-tight mb-1">${item.name}</h4>
-                                    <p class="text-[9px] md:text-[10px] text-stone-500 font-bold mb-1">${item.size} ${item.addon !== 'No Drink' ? '| ' + item.addon : ''}</p>
-                                    <p class="text-[11px] md:text-xs font-black text-brand-600 mb-2">KSh ${item.price.toLocaleString()}</p>
-                                    <div class="flex items-center gap-2 md:gap-3 bg-stone-100 w-fit rounded-full px-2 py-1">
-                                        <button onclick="updateCartQty(${item.cartId}, -1)" class="w-5 h-5 flex items-center justify-center text-stone-500 hover:text-stone-800"><i class="fas fa-minus text-[8px] md:text-[10px]"></i></button>
-                                        <span class="text-[10px] md:text-xs font-bold w-4 text-center text-stone-800">${item.qty}</span>
-                                        <button onclick="updateCartQty(${item.cartId}, 1)" class="w-5 h-5 flex items-center justify-center text-brand-600 hover:text-brand-800"><i class="fas fa-plus text-[8px] md:text-[10px]"></i></button>
+                                    <h4 class="font-black text-[10px] md:text-sm text-stone-800 leading-tight mb-1">${item.name}</h4>
+                                    <p class="text-[8px] md:text-[10px] text-stone-500 font-bold mb-1">${item.size} ${item.addon !== 'No Drink' ? '| ' + item.addon : ''}</p>
+                                    <p class="text-[10px] md:text-xs font-black text-brand-600 mb-2">KSh ${item.price.toLocaleString()}</p>
+                                    <div class="flex items-center gap-1.5 md:gap-3 bg-stone-100 w-fit rounded-full px-2 py-1">
+                                        <button onclick="updateCartQty(${item.cartId}, -1)" class="w-4 h-4 md:w-5 md:h-5 flex items-center justify-center text-stone-500 hover:text-stone-800"><i class="fas fa-minus text-[7px] md:text-[10px]"></i></button>
+                                        <span class="text-[9px] md:text-xs font-bold w-3 md:w-4 text-center text-stone-800">${item.qty}</span>
+                                        <button onclick="updateCartQty(${item.cartId}, 1)" class="w-4 h-4 md:w-5 md:h-5 flex items-center justify-center text-brand-600 hover:text-brand-800"><i class="fas fa-plus text-[7px] md:text-[10px]"></i></button>
                                     </div>
                                 </div>
                             </div>
-                            <button onclick="removeFromCart(${item.cartId})" class="absolute top-3 right-3 md:top-4 md:right-4 w-6 h-6 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors"><i class="fas fa-times text-[10px]"></i></button>
+                            <button onclick="removeFromCart(${item.cartId})" class="absolute top-2 right-2 md:top-4 md:right-4 w-5 h-5 md:w-6 md:h-6 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors"><i class="fas fa-times text-[8px] md:text-[10px]"></i></button>
                         </div>`; 
                     }); 
                 } 
