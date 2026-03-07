@@ -41,18 +41,27 @@
         .hide-scroll::-webkit-scrollbar { display: none; }
 
         /* --- VIEWS --- */
+        nav { height: 60px; padding-top: max(10px, env(safe-area-inset-top)); z-index: 100; transition: background-color 0.3s, box-shadow 0.3s, color 0.3s; }
+        @media (min-width: 768px) { nav { height: 70px; } }
+        nav.scrolled { background: rgba(255, 251, 240, 0.95); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        
         main { flex: 1; display: flex; flex-direction: column; }
         .page { display: none; flex-direction: column; flex: 1; padding-top: 60px; opacity: 0; transition: opacity 0.3s ease; position: relative; z-index: 10; }
         @media (min-width: 768px) { .page { padding-top: 70px; } }
         .page.active { display: flex; opacity: 1; animation: fadeIn 0.4s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* --- GLASS UI --- */
+        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .glass-solid { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        
         /* --- BUTTONS & BADGES --- */
+        .status-badge { display: flex; align-items: center; padding: 4px 8px; border-radius: 99px; background: rgba(255,255,255,0.9); backdrop-filter: blur(4px); border: 1px solid rgba(0,0,0,0.1); color: #0f172a; }
         .btn-primary { background: linear-gradient(135deg, #e91e63, #c2185b); color: white; box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4); transition: transform 0.2s, box-shadow 0.2s; }
         .btn-primary:active { transform: scale(0.95); box-shadow: 0 2px 10px rgba(233, 30, 99, 0.3); }
         
-        .cat-pill { white-space: nowrap; padding: 8px 16px; border-radius: 99px; font-size: 11px; font-weight: 700; border: 1px solid rgba(0,0,0,0.1); color: #57534e; transition: all 0.2s; cursor: pointer; background: white; }
-        @media (min-width: 768px) { .cat-pill { padding: 10px 24px; font-size: 13px; } }
+        .cat-pill { white-space: nowrap; padding: 6px 16px; border-radius: 99px; font-size: 11px; font-weight: 700; border: 1px solid rgba(0,0,0,0.1); color: #57534e; transition: all 0.2s; cursor: pointer; background: white; }
+        @media (min-width: 768px) { .cat-pill { padding: 10px 24px; font-size: 14px; } }
         .cat-active { background: #e91e63; color: white; border-color: #e91e63; box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3); }
         
         /* --- MELON CARDS (COMPACT FOR PC & MOBILE) --- */
@@ -77,6 +86,7 @@
 
         /* --- CART HONEY --- */
         .cart-icon-wrapper { position: relative; cursor: pointer; transition: transform 0.2s; color: #1c1917; }
+        nav.text-white .cart-icon-wrapper { color: white; }
         .cart-icon-wrapper:active { transform: scale(0.9); }
         .cart-badge { position: absolute; top: -4px; right: -6px; background-color: #f59e0b; color: white; font-size: 9px; font-weight: 900; height: 16px; width: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid #fffbf0; }
         .cart-badge.visible { opacity: 1; transform: scale(1); }
@@ -299,8 +309,8 @@
                             <span class="text-[9px] md:text-xs text-stone-500 font-medium">(Chef's Choice)</span>
                         </div>
                         
-                        <div class="flex items-end gap-2 mb-4 md:mb-6">
-                            <div id="price-tag" class="text-3xl md:text-4xl font-black text-brand-600"></div>
+                        <div class="flex items-end gap-2 mb-3 md:mb-4">
+                            <div id="price-tag" class="text-2xl md:text-4xl font-black text-brand-600"></div>
                         </div>
 
                         <p id="product-description" class="text-[11px] md:text-sm text-stone-600 leading-relaxed mb-5 md:mb-8 font-medium"></p>
@@ -330,6 +340,11 @@
                     </div>
                 </div>
 
+                <div class="glass rounded-2xl md:rounded-3xl p-5 md:p-10 mb-8 md:mb-12">
+                    <h3 class="text-sm md:text-lg font-black uppercase tracking-wider mb-4 md:mb-6 text-stone-900 border-b border-gray-200 pb-3 md:pb-4">Details</h3>
+                    <table class="specs-table text-stone-800" id="specs-table"></table>
+                </div>
+                
                 <div class="w-full flex justify-center py-4 md:py-6 mt-auto">
                     <a href="https://www.whats-cart.com/" target="_blank" class="flex flex-row items-center justify-center gap-2 transition-opacity hover:opacity-100 opacity-100">
                         <span class="font-sans text-[10px] text-stone-500 uppercase tracking-[0.2em] font-bold">POWERED BY</span>
@@ -360,7 +375,7 @@
                         
                         <div class="mb-4 md:mb-6">
                             <label class="block text-[10px] md:text-xs font-bold text-stone-500 uppercase tracking-widest mb-2">Delivery Location <span class="text-brand-500">*</span></label>
-                            <select id="delivery-location" class="loc-select w-full bg-stone-50 border border-black/10 text-stone-800 text-[11px] md:text-sm font-bold rounded-xl px-3 py-3 md:px-4 md:py-4 focus:border-brand-500 transition-colors shadow-sm appearance-none cursor-pointer">
+                            <select id="delivery-location" class="loc-select w-full bg-stone-50 border border-black/10 text-stone-800 text-[11px] md:text-sm font-bold rounded-xl px-3 py-3 md:px-4 md:py-4 outline-none focus:border-brand-500 transition-colors shadow-sm appearance-none cursor-pointer">
                                 <option value="" disabled selected>Select drop-off point...</option>
                                 <option value="Qwetu">Qwetu</option>
                                 <option value="KU">KU</option>
@@ -412,10 +427,10 @@
                     </div>
                     
                     <div class="flex flex-col sm:flex-row gap-2 md:gap-3 mb-4 md:mb-6">
-                        <a href="tel:0722986683" class="flex-1 bg-stone-100 text-stone-900 py-3 md:py-4 rounded-xl font-black text-xs active:scale-95 transition-transform flex items-center justify-center gap-2">
+                        <a href="tel:0794455252" class="flex-1 bg-stone-100 text-stone-900 py-3 md:py-4 rounded-xl font-black text-xs active:scale-95 transition-transform flex items-center justify-center gap-2">
                             <i class="fas fa-phone"></i> CALL US
                         </a>
-                        <a href="https://wa.me/254722986683" target="_blank" class="flex-1 bg-[#25D366] hover:bg-[#20bd5a] text-white py-3 md:py-4 rounded-xl font-black text-xs active:scale-95 transition-transform shadow-[0_4px_15px_rgba(37,211,102,0.3)] flex items-center justify-center gap-2">
+                        <a href="https://wa.me/254794455252" target="_blank" class="flex-1 bg-[#25D366] hover:bg-[#20bd5a] text-white py-3 md:py-4 rounded-xl font-black text-xs active:scale-95 transition-transform shadow-[0_4px_15px_rgba(37,211,102,0.3)] flex items-center justify-center gap-2">
                             <i class="fab fa-whatsapp text-sm md:text-lg"></i> WHATSAPP
                         </a>
                     </div>
@@ -434,6 +449,13 @@
     </main>
 
     <script>
+        // --- NAVBAR SCROLL LOGIC ---
+        function updateNavBackground() {
+            const nav = document.getElementById('navbar');
+            nav.classList.add('scrolled'); // Always keep nav solid so it never overlaps text
+        }
+        window.addEventListener('scroll', updateNavBackground);
+
         // --- LOCAL DATABASE (FOOD) ---
         const products = [
             { 
@@ -518,12 +540,13 @@
         // --- STATE ---
         let currentSelection = { product: null, size: '', addon: 'No Drink', finalPrice: 0 };
         let activeCategoryFilter = 'all';
-        let cart = JSON.parse(localStorage.getItem('shilla_cart_final_v9')) || [];
+        let cart = JSON.parse(localStorage.getItem('shilla_cart_final_v10')) || [];
 
         // --- INIT ---
         document.addEventListener("DOMContentLoaded", () => {
             renderGrid(); 
             updateCartUI(); 
+            updateNavBackground();
             
             setTimeout(() => {
                 const loader = document.getElementById('loader');
@@ -560,6 +583,7 @@
             
             setTimeout(() => {
                 target.classList.add('active'); 
+                updateNavBackground(); // Force nav update when page changes instantly
             }, 10);
             
             window.scrollTo(0,0);
@@ -690,6 +714,12 @@
 
             updateSizeHTML(p); 
             
+            const specsTable = document.getElementById('specs-table'); 
+            specsTable.innerHTML = ''; 
+            for (const [key, value] of Object.entries(p.fullSpecs)) { 
+                specsTable.innerHTML += `<tr><td>${key}</td><td class="text-stone-900 font-medium">${value}</td></tr>`; 
+            } 
+            
             showPage('product-detail-view'); 
         }
 
@@ -779,7 +809,7 @@
                 cart.push(item); 
             }
             
-            localStorage.setItem('shilla_cart_final_v8', JSON.stringify(cart)); 
+            localStorage.setItem('shilla_cart_final_v10', JSON.stringify(cart)); 
             updateCartUI(); 
             showToast("Added to Cart"); 
             
@@ -796,20 +826,20 @@
             if (item.qty <= 0) {
                 cart = cart.filter(i => i.cartId !== cartId);
             }
-            localStorage.setItem('shilla_cart_final_v8', JSON.stringify(cart)); 
+            localStorage.setItem('shilla_cart_final_v10', JSON.stringify(cart)); 
             updateCartUI(); 
         }
 
         function removeFromCart(cartId) { 
             cart = cart.filter(item => item.cartId !== cartId); 
-            localStorage.setItem('shilla_cart_final_v8', JSON.stringify(cart)); 
+            localStorage.setItem('shilla_cart_final_v10', JSON.stringify(cart)); 
             updateCartUI(); 
         }
 
         function clearCart() { 
             if(confirm("Clear all items from your cart?")) { 
                 cart = []; 
-                localStorage.setItem('shilla_cart_final_v8', JSON.stringify(cart)); 
+                localStorage.setItem('shilla_cart_final_v10', JSON.stringify(cart)); 
                 updateCartUI(); 
             } 
         }
@@ -874,7 +904,7 @@
             msg += `*Item:* ${getEmoji(p.type)} ${p.name}\n*Size:* ${currentSelection.size}\n`; 
             if (currentSelection.addon !== 'No Drink') msg += `*Add-on:* ${currentSelection.addon}\n`; 
             msg += `*Price:* KSh ${currentSelection.finalPrice.toLocaleString()}`; 
-            window.open('https://wa.me/254722986683?text=' + encodeURIComponent(msg), '_blank'); 
+            window.open('https://wa.me/254794455252?text=' + encodeURIComponent(msg), '_blank'); 
         }
 
         function checkoutCart() { 
@@ -901,7 +931,7 @@
             msg += `📍 *Delivery:* ${location}\n`;
             msg += `💰 *TOTAL TO PAY: KSh ${total.toLocaleString()}*`; 
             
-            window.open('https://wa.me/254722986683?text=' + encodeURIComponent(msg), '_blank'); 
+            window.open('https://wa.me/254794455252?text=' + encodeURIComponent(msg), '_blank'); 
         }
 
         // --- UTILS ---
